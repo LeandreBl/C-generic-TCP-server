@@ -15,7 +15,7 @@ int saddr_null(lsocket_t *socket, int fd)
 	struct sockaddr *p = (struct sockaddr *)&socket->saddr;
 	socklen_t len = sizeof(*p);
 
-	return(getsockname(fd, p, &len));
+	return (getsockname(fd, p, &len));
 }
 
 int lserver_link(lserver_t *server, int fd, struct sockaddr_in *saddr)
