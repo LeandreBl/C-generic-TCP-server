@@ -23,7 +23,7 @@ int lserver_add_listener(lserver_t *server, uint16_t port, int backlog)
 		|| gtab_append(server->listeners, listener) == -1
 		|| epoll_ctl(server->epoll, EPOLL_CTL_ADD, listener->socket->fd, &evt) == -1)
 		return (-1);
-	return (0);	
+	return (0);
 }
 
 int lserver_del_listener(lserver_t *server, uint16_t port)
