@@ -9,7 +9,9 @@ NAME		= liblblserver.so
 
 CC		= gcc
 
-LIBS		=
+LIBS		= -llblsocket
+LIBS		+= -llblgtab
+LIBS		+= -llblcbuffer
 
 SRCS		= src/lserver.c
 SRCS		+= src/update.c
@@ -19,11 +21,10 @@ SRCS		+= src/eject.c
 SRCS		+= src/link.c
 SRCS		+= src/set_backlog.c
 
-TESTS_SRCS := $(SRCS)
-TESTS_SRCS += tests/cbuffer_tests.c
+TESTS_SRCS	:= $(SRCS)
 
 OBJS		= $(SRCS:.c=.o)
-TESTS_OBJS = $(TESTS_SRCS:.c=.o)
+TESTS_OBJS	= $(TESTS_SRCS:.c=.o)
 
 RM		= rm -f
 
@@ -42,13 +43,14 @@ NO_COLOR	= '\033[0m'
 all: $(NAME)
 
 $(NAME): $(OBJS)
-	@$ $(CC) $(LDFLAGS) $(OBJS) -o $@
-	@echo "$(CC) $(LDFLAGS) $(OBJS) -o $@ \
+	@$ $(CC) $(LDFLAGS) $(OBJS) $(LIBS) -o $@
+	@echo "$(CC) $(LDFLAGS) $(OBJS) $(LIBS) -o $@ \
 	["$(GREEN)"LINKING OK"$(NO_COLOR)"]"
 
+tests_run: LIBS += -lcriterion
 tests_run: $(TESTS_OBJS)
-	@$ $(CC) -lcriterion $(TESTS_OBJS) -o $@
-	@echo "$(CC) -lcriterion $(TESTS_OBJS) -o $@ \
+	@$ $(CC) $(TESTS_OBJS) $(LIBS) -o $@
+	@echo "$(CC) $(TESTS_OBJS) $(LIBS) -o $@ \
 	["$(GREEN)"LINKING OK"$(NO_COLOR)"]"
 	./$@
 	@$(RM) $@
