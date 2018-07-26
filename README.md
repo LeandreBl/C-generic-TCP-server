@@ -23,7 +23,7 @@ char *line;
 int val;
 
 /* Start the server on port 2121 and 5555, each client will have a circular buffer of 2048 bytes */
-if (lserver_create(&server, ports, sizeof(porst) / sizeof(*ports), 2048) == -1) {
+if (lserver_create(&server, ports, sizeof(ports) / sizeof(*ports), 2048) == -1) {
   fprintf(stderr, "Failed to start server\n");
   return (-1);
 }
