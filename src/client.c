@@ -7,6 +7,7 @@
 
 #include <string.h>
 #include <stdlib.h>
+#include <sys/select.h>
 
 #include "lclient.h"
 
@@ -39,6 +40,20 @@ int lclient_create32(lclient_t *client, size_t b_size, uint32_t addr, uint16_t p
 		|| cbuffer_create(client->buffer, b_size) == -1)
 		return (__call_failed(client));
 	return (0);
+}
+
+ssize_t lclient_update(lclient_t *client, long ms_timeout)
+{
+	struct timeval tv;
+	fd_set rfds;
+
+	tv.tv_sec = 0;
+	tv.tv_usec = ms_timeout;
+	FD_ZERO(&rfds);
+	FD_SET(client->socket->fd, &rfds);
+	if (select(1, &rfds, NULL, NULL, &tv) == 0)
+		return (0);
+	return (cbuffer_fdwrite(client->buffer, client->socket->fd, -1));
 }
 
 void lclient_destroy(lclient_t *client)
