@@ -9,7 +9,7 @@
 #include <sys/epoll.h>
 #include <unistd.h>
 
-#include "lblserver.h"
+#include "lserver.h"
 
 int lserver_create(lserver_t *server, uint16_t *ports, size_t size, size_t client_buffer_size)
 {

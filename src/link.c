@@ -8,7 +8,7 @@
 #include <sys/epoll.h>
 #include <stdlib.h>
 
-#include "lblserver.h"
+#include "lserver.h"
 
 int saddr_null(lsocket_t *socket, int fd)
 {

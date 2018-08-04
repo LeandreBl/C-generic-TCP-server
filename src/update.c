@@ -9,7 +9,7 @@
 #include <sys/epoll.h>
 #include <string.h>
 
-#include "lblserver.h"
+#include "lserver.h"
 
 static int listen_and_move(lserver_t *server)
 {

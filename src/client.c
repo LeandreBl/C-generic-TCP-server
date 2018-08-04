@@ -8,7 +8,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include "lblclient.h"
+#include "lclient.h"
 
 int lclient_create(lclient_t *client, lsocket_t *socket, size_t buffer_size)
 {

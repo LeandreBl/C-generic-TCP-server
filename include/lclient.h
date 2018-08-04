@@ -8,8 +8,8 @@
 #ifndef _LCLIENT_H
 # define _LCLIENT_H
 
-# include <lblsocket.h>
-# include <lblcbuffer.h>
+# include <lsocket.h>
+# include <lcbuffer.h>
 
 typedef struct lblclient_s {
 	lsocket_t *socket;

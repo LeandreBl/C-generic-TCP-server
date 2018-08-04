@@ -14,8 +14,8 @@
 
 #include <stdio.h>
 
-# include <lblgtab.h>
-# include <lblclient.h>
+# include <lgtab.h>
+# include <lclient.h>
 
 typedef struct lblserver_s {
 	gtab_t *listeners;

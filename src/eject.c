@@ -7,7 +7,7 @@
 
 #include <sys/epoll.h>
 
-#include "lblserver.h"
+#include "lserver.h"
 
 int lserver_eject(lserver_t *server, int fd)
 {

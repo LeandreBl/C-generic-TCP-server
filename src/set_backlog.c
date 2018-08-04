@@ -5,7 +5,7 @@
 ** set backlog
 */
 
-#include "lblserver.h"
+#include "lserver.h"
 
 static int set_all(lserver_t *server, int new_backlog)
 {

@@ -5,13 +5,13 @@
 ## makefile
 ##
 
-NAME		= liblblserver.so
+NAME		= liblserver.so
 
 CC		= gcc
 
-LIBS		= -llblsocket
-LIBS		+= -llblgtab
-LIBS		+= -llblcbuffer
+LIBS		= -llsocket
+LIBS		+= -llgtab
+LIBS		+= -llcbuffer
 
 SRCS		= src/lserver.c
 SRCS		+= src/update.c
