@@ -31,7 +31,7 @@ int lserver_create(lserver_t *server, uint16_t *ports, size_t size, size_t clien
 		listener = malloc(sizeof(*listener));
 		if (listener == NULL)
 			return (-1);
-		if (lclient_create(listener, NULL, 0) == -1)
+		if (lclient_create(listener, 0, NULL, 0) == -1)
 			return (-1);
 		evt.data.ptr = listener;
 		evt.events = EPOLLIN;

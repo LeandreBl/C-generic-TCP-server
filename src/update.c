@@ -23,7 +23,7 @@ static int listen_and_move(lserver_t *server)
 		if (ptr->socket->backlog > 0) {
 			new = malloc(sizeof(*new));
 			evt.data.ptr = new;
-			if (new == NULL || lclient_create(new, NULL, server->client_buffer_size) == -1
+			if (new == NULL || lclient_create(new, server->client_buffer_size, NULL, 0) == -1
 				|| lsocket_accept(ptr->socket, new->socket) == -1
 				|| gtab_append(server->clients, new) == -1
 				|| epoll_ctl(server->epoll, EPOLL_CTL_ADD, new->socket->fd, &evt) == -1)

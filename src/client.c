@@ -10,16 +10,34 @@
 
 #include "lclient.h"
 
-int lclient_create(lclient_t *client, lsocket_t *socket, size_t buffer_size)
+static int __call_failed(lclient_t *client)
+{
+	free(client->socket);
+	free(client->buffer);
+	return (-1);
+}
+
+int lclient_create(lclient_t *client, size_t b_size, const char *url, uint16_t port)
 {
 	client->socket = malloc(sizeof(*client->socket));
 	client->buffer = malloc(sizeof(*client->buffer));
 	if (client->socket == NULL || client->buffer == NULL)
 		return (-1);
-	if (socket != NULL)
-		memcpy(client->socket, socket, sizeof(*client->socket));
-	if (cbuffer_create(client->buffer, buffer_size) == -1)
+	if ((url != NULL && lsocket_connect(client->socket, url, port) == -1)
+		|| cbuffer_create(client->buffer, b_size) == -1)
+		return (__call_failed(client));
+	return (0);
+}
+
+int lclient_create32(lclient_t *client, size_t b_size, uint32_t addr, uint16_t port)
+{
+	client->socket = malloc(sizeof(*client->socket));
+	client->buffer = malloc(sizeof(*client->buffer));
+	if (client->socket == NULL || client->buffer == NULL)
 		return (-1);
+	if (lsocket_connect32(client->socket, addr, port) == -1
+		|| cbuffer_create(client->buffer, b_size) == -1)
+		return (__call_failed(client));
 	return (0);
 }
 

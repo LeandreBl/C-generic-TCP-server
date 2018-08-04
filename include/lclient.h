@@ -16,6 +16,7 @@ typedef struct lblclient_s {
 	cbuffer_t *buffer;
 } lclient_t;
 
-int lclient_create(lclient_t *client, lsocket_t *socket, size_t buffer_size);
+int lclient_create(lclient_t *client, size_t buffer_size, const char *address, uint16_t port);
+int lclient_create32(lclient_t *client, size_t b_size, uint32_t addr, uint16_t port);
 void lclient_destroy(lclient_t *client);
 #endif /* !_LCLIENT_H_ */

@@ -23,7 +23,7 @@ int lserver_link(lserver_t *server, int fd, struct sockaddr_in *saddr)
 	lclient_t *new = malloc(sizeof(*new));
 	struct epoll_event evt;
 
-	if (new == NULL || lclient_create(new, NULL, server->client_buffer_size) == -1)
+	if (new == NULL || lclient_create(new, server->client_buffer_size, NULL, 0) == -1)
 		return (-1);
 	new->socket->fd = fd;
 	if (saddr != NULL)
