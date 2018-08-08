@@ -1,8 +1,7 @@
 # lserver
-C TCP/IP socket server, with multi listener.
+This libray include a linux server implementation, and a client one.
 
-
-This server uses my other libs (`socket`, `buffer` and `gtab`) to run.
+This library uses my other libs (`socket`, `buffer` and `gtab`) to run.
 
 Each `lclient_t` output is usable in each index of `server->clients->i[i]`.
 Each index of `server->clients->i[i]` is a `lclient_t` object.
@@ -47,4 +46,29 @@ while (1) {
 
 /* Destroy the server, eject all clients, close all listeners, clean all buffers, free all memory */
 lserver_destroy(&server);
+```
+
+The other part of the library, which is partially used in the server part, includes a client implementation.
+
+```C
+int main(void)
+{
+  lclient_t client;
+  char *output;
+
+  /* Connect the client on the address specified as 3rd parameter on port `21`, with a circular buffer of `4096` bytes */
+  lclient_create(&client, 4096, "fakeFTP.doesnotexist", 21); /* an other function: `lclient_connect32`, takes an `uint32_t` */
+  
+  /* Reads from the server and store the read bytes into the client's circular buffer and returns the amount of bytes read */
+  lclient_update(&client, 100); /* We give 100 timeout milliseconds to the function */
+  
+  /* Retrieve each bytes of the buffer, allocate enough space and copy them into the given pointer */
+  cbuffer_retrieve(client->buffer, &output);
+  printf("%s\n", output);
+  free(output);
+  
+  /* destroy the client, close the connection and free allocated memory */
+  lclient_destroy(&client);
+  return (0);
+}
 ```
