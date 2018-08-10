@@ -48,7 +48,7 @@ static int reading_clients(lserver_t *server)
 
 	for (int i = 0; i < server->esize; ++i) {
 		ptr = server->events[i].data.ptr;
-		rd = cbuffer_fdwrite(ptr->buffer, ptr->socket->fd, -1);
+		rd = lbuffer_fdwrite(ptr->buffer, ptr->socket->fd, -1);
 		if (rd == -1)
 			return (-1);
 		if (rd == 0) {

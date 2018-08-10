@@ -25,7 +25,7 @@ int lclient_create(lclient_t *client, size_t b_size, const char *url, uint16_t p
 	if (client->socket == NULL || client->buffer == NULL)
 		return (-1);
 	if ((url != NULL && lsocket_connect(client->socket, url, port) == -1)
-		|| cbuffer_create(client->buffer, b_size) == -1)
+		|| lbuffer_create(client->buffer, b_size) == -1)
 		return (__call_failed(client));
 	return (0);
 }
@@ -37,7 +37,7 @@ int lclient_create32(lclient_t *client, size_t b_size, uint32_t addr, uint16_t p
 	if (client->socket == NULL || client->buffer == NULL)
 		return (-1);
 	if (lsocket_connect32(client->socket, addr, port) == -1
-		|| cbuffer_create(client->buffer, b_size) == -1)
+		|| lbuffer_create(client->buffer, b_size) == -1)
 		return (__call_failed(client));
 	return (0);
 }
@@ -52,13 +52,13 @@ ssize_t lclient_update(lclient_t *client, int ms_timeout)
 	ret = poll(&pfd, 1, ms_timeout);
 	if (ret <= 0)
 		return (ret);
-	return (cbuffer_fdwrite(client->buffer, client->socket->fd, -1));
+	return (lbuffer_fdwrite(client->buffer, client->socket->fd, -1));
 }
 
 void lclient_destroy(lclient_t *client)
 {
 	lsocket_destroy(client->socket);
-	cbuffer_destroy(client->buffer);
+	lbuffer_destroy(client->buffer);
 	free(client->buffer);
 	free(client->socket);
 }
