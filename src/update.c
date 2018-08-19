@@ -11,27 +11,36 @@
 
 #include "lserver.h"
 
-static int listen_and_move(lserver_t *server)
+static int is_a_listener(lserver_t *server, lclient_t *ptr)
 {
-	lclient_t *ptr;
-	lclient_t *new;
 	struct epoll_event evt;
+	lclient_t *new;
 
 	evt.events = EPOLLIN;
+	new = malloc(sizeof(*new));
+	evt.data.ptr = new;
+	if (new == NULL || lclient_create(new, server->client_buffer_size, NULL, 0) == -1
+		|| lsocket_accept(ptr->socket, new->socket) == -1
+		|| gtab_append(server->clients, new) == -1
+		|| epoll_ctl(server->epoll, EPOLL_CTL_ADD, new->socket->fd, &evt) == -1)
+		return (-1);
+	return (0);
+}
+
+static int listen_and_move(lserver_t *server)
+{
+	lclient_t *ptr;	
+
+	
 	for (int i = 0; i < server->esize; ++i) {
 		ptr = server->events[i].data.ptr;
 		if (ptr->socket->backlog > 0) {
-			new = malloc(sizeof(*new));
-			evt.data.ptr = new;
-			if (new == NULL || lclient_create(new, server->client_buffer_size, NULL, 0) == -1
-				|| lsocket_accept(ptr->socket, new->socket) == -1
-				|| gtab_append(server->clients, new) == -1
-				|| epoll_ctl(server->epoll, EPOLL_CTL_ADD, new->socket->fd, &evt) == -1)
+			if (is_a_listener(server, ptr) == -1)
 				return (-1);
 			memmove(&server->events[i], &server->events[i + 1],
-				sizeof(*server->events) * (server->esize - i));
-			--i;
+				sizeof(*server->events) * (server->esize - i - 1));
 			--server->esize;
+			--i;
 		}
 	}
 	if (server->esize == 0) {
