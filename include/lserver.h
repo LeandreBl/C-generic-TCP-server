@@ -26,7 +26,7 @@ typedef struct lblserver_s {
 	int epoll;
 } lserver_t;
 
-int lserver_create(lserver_t *server, uint16_t *ports, size_t size, size_t client_buffer_size);
+int lserver_create(lserver_t *server, const uint16_t *ports, size_t size, size_t client_buffer_size);
 int lserver_update(lserver_t *server, int timeout);
 void lserver_destroy(lserver_t *server);
 

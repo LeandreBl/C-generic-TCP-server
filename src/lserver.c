@@ -11,11 +11,8 @@
 
 #include "lserver.h"
 
-int lserver_create(lserver_t *server, uint16_t *ports, size_t size, size_t client_buffer_size)
+static int lserver_setvalues(lserver_t *server, size_t ports_n, size_t client_buffer_size)
 {
-	lclient_t *listener;
-	struct epoll_event evt;
-
 	server->esize = 0;
 	server->events = NULL;
 	server->client_buffer_size = client_buffer_size;
@@ -25,7 +22,17 @@ int lserver_create(lserver_t *server, uint16_t *ports, size_t size, size_t clien
 	if (server->listeners == NULL || server->clients == NULL || server->epoll == -1)
 		return (-1);
 	if (gtab_create(server->clients, 8) == -1 ||
-		gtab_create(server->listeners, size) == -1)
+		gtab_create(server->listeners, ports_n) == -1)
+		return (-1);
+	return (0);
+}
+
+int lserver_create(lserver_t *server, const uint16_t *ports, size_t size, size_t client_buffer_size)
+{
+	lclient_t *listener;
+	struct epoll_event evt;
+
+	if (lserver_setvalues(server, size, client_buffer_size) == -1)
 		return (-1);
 	for (size_t i = 0; i < size; ++i) {
 		listener = malloc(sizeof(*listener));
