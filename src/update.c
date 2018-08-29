@@ -6,7 +6,6 @@
 */
 
 #include <stdlib.h>
-#include <sys/epoll.h>
 #include <string.h>
 
 #include "lserver.h"

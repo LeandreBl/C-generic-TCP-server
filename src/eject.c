@@ -5,8 +5,6 @@
 ** eject
 */
 
-#include <sys/epoll.h>
-
 #include "lserver.h"
 
 int lserver_eject(lserver_t *server, int fd)

@@ -12,7 +12,8 @@
 # include <stdbool.h>
 # include <stddef.h>
 
-#include <stdio.h>
+# include <stdio.h>
+# include <sys/epoll.h>
 
 # include <lgtab.h>
 # include <lclient.h>

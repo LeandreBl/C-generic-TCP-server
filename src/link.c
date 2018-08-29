@@ -5,7 +5,6 @@
 ** link
 */
 
-#include <sys/epoll.h>
 #include <stdlib.h>
 
 #include "lserver.h"
