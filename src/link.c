@@ -1,10 +1,3 @@
-/*
-** EPITECH PROJECT, 2018
-** lserver API
-** File description:
-** link
-*/
-
 #include <stdlib.h>
 
 #include "lserver.h"

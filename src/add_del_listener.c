@@ -1,10 +1,3 @@
-/*
-** EPITECH PROJECT, 2018
-** lserver API
-** File description:
-** add / del_listener
-*/
-
 #include <stdlib.h>
 
 #include "lserver.h"

@@ -1,20 +1,12 @@
-/*
-** EPITECH PROJECT, 2018
-** lserver API
-** File description:
-** lserver
-*/
-
 #include <stdlib.h>
-#include <sys/epoll.h>
 #include <unistd.h>
+#include <string.h>
 
 #include "lserver.h"
 
 static int lserver_setvalues(lserver_t *server, size_t ports_n, size_t client_buffer_size)
 {
-	server->esize = 0;
-	server->events = NULL;
+	memset(server, 0, sizeof(*server));
 	server->client_buffer_size = client_buffer_size;
 	server->listeners = malloc(sizeof(*server->listeners));
 	server->clients = malloc(sizeof(*server->clients));

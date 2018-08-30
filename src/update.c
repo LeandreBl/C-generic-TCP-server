@@ -1,10 +1,3 @@
-/*
-** EPITECH PROJECT, 2018
-** lserver API
-** File description:
-** update
-*/
-
 #include <stdlib.h>
 #include <string.h>
 
@@ -23,6 +16,8 @@ static int is_a_listener(lserver_t *server, lclient_t *ptr)
 		|| gtab_append(server->clients, new) == -1
 		|| epoll_ctl(server->epoll, EPOLL_CTL_ADD, new->socket->fd, &evt) == -1)
 		return (-1);
+	if (server->on_connect)
+		server->on_connect(new, server->data_connect);
 	return (0);
 }
 
@@ -64,6 +59,8 @@ static int reading_clients(lserver_t *server)
 				return (-1);
 			memmove(&server->events[i], &server->events[i + 1], sizeof(*server->events));
 			--server->esize;
+			if (server->on_disconnect != NULL)
+				server->on_disconnect(ptr, server->data_disconnect);
 			gtab_remove(server->clients, ptr, _client_destructor);
 		}
 	}

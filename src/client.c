@@ -1,10 +1,3 @@
-/*
-** EPITECH PROJECT, 2018
-** server API
-** File description:
-** client
-*/
-
 #include <string.h>
 #include <stdlib.h>
 #include <poll.h>
