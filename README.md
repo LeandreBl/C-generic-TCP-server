@@ -33,7 +33,7 @@ while (1) {
   for (int i = 0; i < server->esize; ++i) {
     ptr = server->events[i].data.ptr;
 
-    /* Read from the client buffer and store each byte into <line> until a '\n' or a ':' is encountered */
+    /* Read from the client buffer and store each byte into <line> until the ":\n" string is encountered */
     cbuffer_getbytes(ptr->buffer, &line, ":\n");
     /* Read 4 bytes from the client buffer, into the int */
     cbuffer_read(ptr->buffer, &val, sizeof(val));
