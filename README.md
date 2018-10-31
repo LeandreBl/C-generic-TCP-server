@@ -30,8 +30,8 @@ if (lserver_create(&server, ports, sizeof(ports) / sizeof(*ports), 2048) == -1) 
 while (1) {
   /* Gives 100 miliseconds to the server to update */
   lserver_update(&server, 100);
-  for (int i = 0; i < server->esize; ++i) {
-    ptr = server->events[i].data.ptr;
+  for (int i = 0; i < server.esize; ++i) {
+    ptr = server.events[i].data.ptr;
 
     /* Read from the client buffer and store each byte into <line> until the ":\n" string is encountered */
     cbuffer_getbytes(ptr->buffer, &line, ":\n");
