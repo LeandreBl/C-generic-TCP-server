@@ -34,12 +34,12 @@ while (1) {
     ptr = server.events[i].data.ptr;
 
     /* Read from the client buffer and store each byte into <line> until the ":\n" string is encountered */
-    cbuffer_getbytes(ptr->buffer, &line, ":\n");
+    lbuffer_getbytes(ptr->buffer, &line, ":\n");
     /* Read 4 bytes from the client buffer, into the int */
-    cbuffer_read(ptr->buffer, &val, sizeof(val));
+    lbuffer_read(ptr->buffer, &val, sizeof(val));
 
     printf("%s: %d\n", line, val);
-    /* Since cbuffer_getbytes() uses MALLOC(3) to set <line>, it needs to be freed */
+    /* Since lbuffer_getbytes() uses MALLOC(3) to set <line>, it needs to be freed */
     free(line);
   }
 }
@@ -63,7 +63,7 @@ int main(void)
   lclient_update(&client, 100); /* We give 100 timeout milliseconds to the function */
   
   /* Retrieve each bytes of the buffer, allocate enough space and copy them into the given pointer */
-  cbuffer_retrieve(client->buffer, &output);
+  cbuffer_retrieve(client.buffer, &output);
   printf("%s\n", output);
   free(output);
   
