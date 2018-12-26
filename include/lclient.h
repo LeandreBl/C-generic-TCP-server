@@ -12,8 +12,8 @@
 # include <lbuffer.h>
 
 typedef struct lblclient_s {
-	lsocket_t *socket;
-	lbuffer_t *buffer;
+	lsocket_t socket;
+	lbuffer_t buffer;
 } lclient_t;
 
 int lclient_create(lclient_t *client, size_t buffer_size, const char *address, uint16_t port);

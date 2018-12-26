@@ -12,8 +12,8 @@
 # include <lclient.h>
 
 typedef struct lblserver_s {
-	gtab_t *listeners;
-	gtab_t *clients;
+	gtab_t listeners;
+	gtab_t clients;
 	void *data_connect;
 	void *data_disconnect;
 	void (* on_connect)(lclient_t *, void *);
