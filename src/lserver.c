@@ -44,7 +44,7 @@ int lserver_create(lserver_t *server, const uint16_t *ports, size_t size,
   return (0);
 }
 
-void _client_destructor(void *ptr)
+void _lserver_lclient_destructor(void *ptr)
 {
   lclient_destroy(ptr);
   free(ptr);
@@ -52,8 +52,8 @@ void _client_destructor(void *ptr)
 
 void lserver_destroy(lserver_t *server)
 {
-  gtab_destroy(&server->listeners, _client_destructor);
-  gtab_destroy(&server->clients, _client_destructor);
+  gtab_destroy(&server->listeners, _lserver_lclient_destructor);
+  gtab_destroy(&server->clients, _lserver_lclient_destructor);
   free(server->events);
   close(server->epoll);
 }
