@@ -46,7 +46,10 @@ int lserver_create(lserver_t *server, const uint16_t *ports, size_t size,
 
 void _lserver_lclient_destructor(void *ptr)
 {
-  lclient_destroy(ptr);
+  lclient_t *client = ptr;
+
+  lsocket_shutdown(&client->socket);
+  lclient_destroy(client);
   free(ptr);
 }
 
