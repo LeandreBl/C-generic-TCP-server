@@ -71,7 +71,8 @@ re: fclean all
 install: re
 	@cp $(NAME) /usr/lib/$(NAME) 2> /dev/null || \
 	printf "\033[1m\033[31mError : try sudo make install\033[0m\n" && \
-	cp include/*.h /usr/include/ 2> /dev/null && \
+	cp include/lserver.h /usr/include/ 2> /dev/null && \
+	cp include/lclient.h /usr/include/ 2> /dev/null && \
 	printf "\033[1m\033[32mLibrary successfull installed !\033[0m\n"
 
 .PHONY: all clean fclean re tests_run debug install

@@ -40,7 +40,4 @@ int lserver_del_listener(lserver_t *server, uint16_t listener_port);
 /* if listener_port == 0, set all listeners */
 int lserver_set_backlog(lserver_t *server, uint16_t listener_port, int new_backlog);
 
-/* API internal use only */
-void _client_destructor(void *ptr);
-
 #endif /* !_LSERVER_H */
