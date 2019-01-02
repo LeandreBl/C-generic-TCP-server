@@ -9,6 +9,8 @@ NAME		= liblserver.so
 
 CC		= gcc
 
+ARCHIVER	= ar
+
 LIBS		= -llsocket
 LIBS		+= -llgtab
 LIBS		+= -llcbuffer
@@ -64,7 +66,7 @@ clean:
 	$(RM) $(OBJS)
 
 fclean: clean
-	$(RM) $(NAME)
+	$(RM) $(NAME) $(NAME:.so=.a)
 
 re: fclean all
 
@@ -75,4 +77,7 @@ install: re
 	cp include/lclient.h /usr/include/ 2> /dev/null && \
 	printf "\033[1m\033[32mLibrary successfull installed !\033[0m\n"
 
-.PHONY: all clean fclean re tests_run debug install
+static: $(OBJS)
+	$(ARCHIVER) rc $(NAME:.so=.a) $(OBJS)
+
+.PHONY: all clean fclean re tests_run debug install static
