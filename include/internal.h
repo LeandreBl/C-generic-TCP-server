@@ -4,6 +4,6 @@
 # include "lserver.h"
 # include "lclient.h"
 
-void _lserver_lclient_destructor(void *ptr);
+void _lserver_lclient_destructor(void *ptr) __THROW __nonnull((1));
 
 #endif /* !INTERNAL_H_ */
