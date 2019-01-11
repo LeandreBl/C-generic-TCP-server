@@ -4,6 +4,15 @@
 
 #include "lserver.h"
 
+static void _lserver_lclient_destructor(void *ptr)
+{
+  lclient_t *client = ptr;
+
+  lsocket_shutdown(&client->socket);
+  lclient_destroy(client);
+  free(ptr);
+}
+
 static int lserver_setvalues(lserver_t *server, size_t ports_n, size_t client_buffer_size)
 {
   memset(server, 0, sizeof(*server));
@@ -11,7 +20,8 @@ static int lserver_setvalues(lserver_t *server, size_t ports_n, size_t client_bu
   server->epoll = epoll_create1(EPOLL_CLOEXEC);
   if (server->epoll == -1)
     return (-1);
-  if (gtab_create(&server->clients, 8) == -1 || gtab_create(&server->listeners, ports_n) == -1)
+  if (gtab_create(&server->clients, 8, _lserver_lclient_destructor) == -1
+      || gtab_create(&server->listeners, ports_n, _lserver_lclient_destructor) == -1)
     return (-1);
   return (0);
 }
@@ -40,19 +50,10 @@ int lserver_create(lserver_t *server, const uint16_t *ports, size_t size, size_t
   return (0);
 }
 
-void _lserver_lclient_destructor(void *ptr)
-{
-  lclient_t *client = ptr;
-
-  lsocket_shutdown(&client->socket);
-  lclient_destroy(client);
-  free(ptr);
-}
-
 void lserver_destroy(lserver_t *server)
 {
-  gtab_destroy(&server->listeners, _lserver_lclient_destructor);
-  gtab_destroy(&server->clients, _lserver_lclient_destructor);
+  gtab_destroy(&server->listeners);
+  gtab_destroy(&server->clients);
   free(server->events);
   close(server->epoll);
 }

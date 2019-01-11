@@ -5,7 +5,7 @@
 ** eject
 */
 
-#include "internal.h"
+#include "lserver.h"
 
 int lserver_eject(lserver_t *server, int fd)
 {
@@ -16,7 +16,7 @@ int lserver_eject(lserver_t *server, int fd)
     if (client->socket.fd == fd) {
       if (epoll_ctl(server->epoll, EPOLL_CTL_DEL, fd, NULL) == -1)
         return (-1);
-      gtab_remove_at(&server->clients, i, _lserver_lclient_destructor);
+      gtab_remove_at(&server->clients, i);
       return (0);
     }
   }

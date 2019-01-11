@@ -1,6 +1,6 @@
 #include <stdlib.h>
 
-#include "internal.h"
+#include "lserver.h"
 
 int lserver_add_listener(lserver_t *server, uint16_t port, int backlog)
 {
@@ -26,7 +26,7 @@ int lserver_del_listener(lserver_t *server, uint16_t port)
     if (ptr->socket.port == port) {
       if (epoll_ctl(server->epoll, EPOLL_CTL_DEL, ptr->socket.fd, NULL) == -1)
         return (-1);
-      gtab_remove_at(&server->listeners, i, _lserver_lclient_destructor);
+      gtab_remove_at(&server->listeners, i);
       return (0);
     }
   }

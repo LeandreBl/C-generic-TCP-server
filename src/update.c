@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "internal.h"
+#include "lserver.h"
 
 static int is_a_listener(lserver_t *server, lclient_t *ptr)
 {
@@ -59,7 +59,7 @@ static int reading_clients(lserver_t *server)
       --server->esize;
       if (server->on_disconnect != NULL)
         server->on_disconnect(ptr, server->data_disconnect);
-      gtab_remove(&server->clients, ptr, _lserver_lclient_destructor);
+      gtab_remove(&server->clients, ptr);
     }
   }
   return (0);
