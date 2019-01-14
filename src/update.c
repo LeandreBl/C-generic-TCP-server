@@ -10,7 +10,8 @@ static int is_a_listener(lserver_t *server, lclient_t *ptr)
 
   evt.events = EPOLLIN;
   evt.data.ptr = new;
-  if (new == NULL || lclient_create(new, server->client_buffer_size, NULL, 0) == -1
+  if (new == NULL
+      || lclient_create(new, server->client_buffer_size, NULL, 0) == -1
       || lsocket_accept(&ptr->socket, &new->socket) == -1
       || gtab_append(&server->clients, new) == -1
       || epoll_ctl(server->epoll, EPOLL_CTL_ADD, new->socket.fd, &evt) == -1)
@@ -55,7 +56,8 @@ static int reading_clients(lserver_t *server)
     if (rd == 0) {
       if (epoll_ctl(server->epoll, EPOLL_CTL_DEL, ptr->socket.fd, NULL) == -1)
         return (-1);
-      memmove(&server->events[i], &server->events[i + 1], sizeof(*server->events));
+      memmove(&server->events[i], &server->events[i + 1],
+              sizeof(*server->events));
       --server->esize;
       if (server->on_disconnect != NULL)
         server->on_disconnect(ptr, server->data_disconnect);

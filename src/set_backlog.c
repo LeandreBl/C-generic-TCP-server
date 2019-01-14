@@ -19,7 +19,8 @@ static int set_all(lserver_t *server, int new_backlog)
   return (0);
 }
 
-int lserver_set_backlog(lserver_t *server, uint16_t listener_port, int new_backlog)
+int lserver_set_backlog(lserver_t *server, uint16_t listener_port,
+                        int new_backlog)
 {
   lclient_t *ptr;
 
