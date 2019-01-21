@@ -4,8 +4,7 @@
 
 #include "lclient.h"
 
-int lclient_create(lclient_t *client, size_t b_size, const char *url,
-                   uint16_t port)
+int lclient_create(lclient_t *client, size_t b_size, const char *url, uint16_t port)
 {
   if ((url != NULL && lsocket_connect(&client->socket, url, port) == -1)
       || lbuffer_create(&client->buffer, b_size) == -1)
@@ -13,8 +12,7 @@ int lclient_create(lclient_t *client, size_t b_size, const char *url,
   return (0);
 }
 
-int lclient_create32(lclient_t *client, size_t b_size, uint32_t addr,
-                     uint16_t port)
+int lclient_create32(lclient_t *client, size_t b_size, uint32_t addr, uint16_t port)
 {
   if (lsocket_connect32(&client->socket, addr, port) == -1
       || lbuffer_create(&client->buffer, b_size) == -1)

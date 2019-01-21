@@ -13,8 +13,7 @@ static void _lserver_lclient_destructor(void *ptr)
   free(ptr);
 }
 
-static int lserver_setvalues(lserver_t *server, size_t ports_n,
-                             size_t client_buffer_size)
+static int lserver_setvalues(lserver_t *server, size_t ports_n, size_t client_buffer_size)
 {
   memset(server, 0, sizeof(*server));
   server->client_buffer_size = client_buffer_size;
@@ -22,14 +21,12 @@ static int lserver_setvalues(lserver_t *server, size_t ports_n,
   if (server->epoll == -1)
     return (-1);
   if (gtab_create(&server->clients, 8, _lserver_lclient_destructor) == -1
-      || gtab_create(&server->listeners, ports_n, _lserver_lclient_destructor)
-                 == -1)
+      || gtab_create(&server->listeners, ports_n, _lserver_lclient_destructor) == -1)
     return (-1);
   return (0);
 }
 
-int lserver_create(lserver_t *server, const uint16_t *ports, size_t size,
-                   size_t client_buffer_size)
+int lserver_create(lserver_t *server, const uint16_t *ports, size_t size, size_t client_buffer_size)
 {
   lclient_t *listener;
   struct epoll_event evt;
@@ -47,8 +44,7 @@ int lserver_create(lserver_t *server, const uint16_t *ports, size_t size,
     if (lsocket_server(&listener->socket, ports[i], 64) == -1)
       return (-1);
     if (gtab_sappend(&server->listeners, listener) == -1
-        || epoll_ctl(server->epoll, EPOLL_CTL_ADD, listener->socket.fd, &evt)
-                   == -1)
+        || epoll_ctl(server->epoll, EPOLL_CTL_ADD, listener->socket.fd, &evt) == -1)
       return (-1);
   }
   return (0);

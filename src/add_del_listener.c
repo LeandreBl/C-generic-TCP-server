@@ -9,12 +9,10 @@ int lserver_add_listener(lserver_t *server, uint16_t port, int backlog)
 
   evt.data.ptr = listener;
   evt.events = EPOLLIN;
-  if (listener == NULL
-      || lclient_create(listener, server->client_buffer_size, NULL, 0) == -1
+  if (listener == NULL || lclient_create(listener, server->client_buffer_size, NULL, 0) == -1
       || lsocket_server(&listener->socket, port, backlog) == -1
       || gtab_append(&server->listeners, listener) == -1
-      || epoll_ctl(server->epoll, EPOLL_CTL_ADD, listener->socket.fd, &evt)
-                 == -1)
+      || epoll_ctl(server->epoll, EPOLL_CTL_ADD, listener->socket.fd, &evt) == -1)
     return (-1);
   return (0);
 }
