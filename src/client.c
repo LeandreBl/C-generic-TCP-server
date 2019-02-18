@@ -7,8 +7,10 @@
 int lclient_create(lclient_t *client, size_t b_size, const char *url, uint16_t port)
 {
   if ((url != NULL && lsocket_connect(&client->socket, url, port) == -1)
-      || lbuffer_create(&client->buffer, b_size) == -1)
+      || lbuffer_create(&client->buffer, b_size) == -1) {
+    memset(client, 0, sizeof(*client));
     return (-1);
+  }
   return (0);
 }
 
