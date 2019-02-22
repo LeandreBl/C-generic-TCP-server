@@ -1,7 +1,7 @@
 # lserver
 This libray include a linux server implementation, and a client one.
 
-This library uses my other libs (`socket`, `buffer` and `gtab`) to run.
+This library uses my other libs (`socket`, `buffer` and `lvector`) to run.
 
 Each `lclient_t` output is usable in each index of `server->clients->i[i]`.
 Each index of `server->clients->i[i]` is a `lclient_t` object.
