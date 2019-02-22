@@ -12,11 +12,11 @@ static int saddr_null(lsocket_t *socket, int fd)
 
 int lserver_link(lserver_t *server, int fd, struct sockaddr_in *saddr)
 {
-  lclient_t *new = malloc(sizeof(*new));
+  lclient_t *new;
   struct epoll_event evt;
 
-  if (new == NULL || lclient_create(new, server->client_buffer_size, NULL, 0) == -1)
-    return (-1);
+  lvector_emplace_back(server->clients, lclient_create, server->client_buffer_size, NULL, 0);
+  new = lvector_back(server->clients);
   new->socket.fd = fd;
   if (saddr != NULL)
     new->socket.saddr = *saddr;
@@ -27,8 +27,7 @@ int lserver_link(lserver_t *server, int fd, struct sockaddr_in *saddr)
   new->socket.port = htons(saddr->sin_port);
   evt.data.ptr = new;
   evt.events = EPOLLIN;
-  if (gtab_append(&server->clients, new) == -1
-      || epoll_ctl(server->epoll, EPOLL_CTL_ADD, new->socket.fd, &evt) == -1)
+  if (epoll_ctl(server->epoll, EPOLL_CTL_ADD, new->socket.fd, &evt) == -1)
     return (-1);
   return (0);
 }

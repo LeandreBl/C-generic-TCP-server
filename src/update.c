@@ -6,13 +6,13 @@
 static int is_a_listener(lserver_t *server, lclient_t *ptr)
 {
   struct epoll_event evt;
-  lclient_t *new = malloc(sizeof(*new));
+  lclient_t *new;
 
+  lvector_emplace_back(server->clients, lclient_create, server->client_buffer_size, NULL, 0);
+  new = lvector_back(server->clients);
   evt.events = EPOLLIN;
   evt.data.ptr = new;
-  if (new == NULL || lclient_create(new, server->client_buffer_size, NULL, 0) == -1
-      || lsocket_accept(&ptr->socket, &new->socket) == -1
-      || gtab_append(&server->clients, new) == -1
+  if (lsocket_accept(&ptr->socket, &new->socket) == -1
       || epoll_ctl(server->epoll, EPOLL_CTL_ADD, new->socket.fd, &evt) == -1)
     return (-1);
   if (server->on_connect)
@@ -42,6 +42,17 @@ static int listen_and_move(lserver_t *server)
   return (0);
 }
 
+static size_t erase_client(void *vector, lclient_t *ptr)
+{
+  lvector(lclient_t) *v = vector;
+  size_t i;
+
+  for (i = 0; i < v->len; ++i)
+    if (&v->arr[i] == ptr)
+      return (i);
+  return (i);
+}
+
 static int reading_clients(lserver_t *server)
 {
   lclient_t *ptr;
@@ -59,7 +70,7 @@ static int reading_clients(lserver_t *server)
       --server->esize;
       if (server->on_disconnect != NULL)
         server->on_disconnect(ptr, server->data_disconnect);
-      gtab_remove(&server->clients, ptr);
+      lvector_erase(server->clients, erase_client(&server->clients, ptr));
     }
   }
   return (0);

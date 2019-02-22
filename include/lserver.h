@@ -9,12 +9,12 @@
 # include <sys/epoll.h>
 # include <sys/cdefs.h>
 
-# include <lgtab.h>
 # include <lclient.h>
+# include <lvector.h>
 
 typedef struct lblserver_s {
-	gtab_t listeners;
-	gtab_t clients;
+	lvector(lclient_t) listeners;
+	lvector(lclient_t) clients;
 	void *data_connect;
 	void *data_disconnect;
 	void (* on_connect)(lclient_t *, void *);

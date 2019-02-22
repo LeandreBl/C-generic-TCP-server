@@ -4,13 +4,10 @@
 
 #include "lserver.h"
 
-static void _lserver_lclient_destructor(void *ptr)
+static void _lserver_lclient_destructor(lclient_t *client)
 {
-  lclient_t *client = ptr;
-
   lsocket_shutdown(&client->socket);
   lclient_destroy(client);
-  free(ptr);
 }
 
 static int lserver_setvalues(lserver_t *server, size_t ports_n, size_t client_buffer_size)
@@ -20,31 +17,39 @@ static int lserver_setvalues(lserver_t *server, size_t ports_n, size_t client_bu
   server->epoll = epoll_create1(EPOLL_CLOEXEC);
   if (server->epoll == -1)
     return (-1);
-  if (gtab_create(&server->clients, 8, _lserver_lclient_destructor) == -1
-      || gtab_create(&server->listeners, ports_n, _lserver_lclient_destructor) == -1)
+  lvector_create(server->clients, 8, _lserver_lclient_destructor);
+  lvector_create(server->listeners, ports_n, _lserver_lclient_destructor);
+  if (server->clients.arr == NULL || server->listeners.arr == NULL)
     return (-1);
   return (0);
 }
 
+static bool port_already_pushed(void *vector, const uint16_t port)
+{
+  lvector(lclient_t) *v = vector;
+
+  for (size_t i = 0; i < v->len; ++i) {
+    if (v->arr[i].socket.port == port)
+      return (true);
+  }
+  return (false);
+}
+
 int lserver_create(lserver_t *server, const uint16_t *ports, size_t size, size_t client_buffer_size)
 {
-  lclient_t *listener;
   struct epoll_event evt;
 
   if (lserver_setvalues(server, size, client_buffer_size) == -1)
     return (-1);
   for (size_t i = 0; i < size; ++i) {
-    listener = malloc(sizeof(*listener));
-    if (listener == NULL)
-      return (-1);
-    if (lclient_create(listener, 0, NULL, 0) == -1)
-      return (-1);
-    evt.data.ptr = listener;
+    if (port_already_pushed(&server->listeners, ports[i]) == true)
+      continue;
+    lvector_emplace_back(server->listeners, lclient_create, 0, NULL, 0);
+    evt.data.ptr = lvector_back(server->listeners);
     evt.events = EPOLLIN;
-    if (lsocket_server(&listener->socket, ports[i], 64) == -1)
+    if (lsocket_server(&lvector_back(server->listeners)->socket, ports[i], 64) == -1)
       return (-1);
-    if (gtab_sappend(&server->listeners, listener) == -1
-        || epoll_ctl(server->epoll, EPOLL_CTL_ADD, listener->socket.fd, &evt) == -1)
+    if (epoll_ctl(server->epoll, EPOLL_CTL_ADD, lvector_back(server->listeners)->socket.fd, &evt) == -1)
       return (-1);
   }
   return (0);
@@ -52,8 +57,8 @@ int lserver_create(lserver_t *server, const uint16_t *ports, size_t size, size_t
 
 void lserver_destroy(lserver_t *server)
 {
-  gtab_destroy(&server->listeners);
-  gtab_destroy(&server->clients);
+  lvector_destroy(server->listeners);
+  lvector_destroy(server->clients);
   free(server->events);
   close(server->epoll);
 }
