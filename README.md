@@ -1,7 +1,7 @@
 # lserver
 This library includes a linux server implementation, and a client one.
 
-This library uses my other libs (`socket`, `buffer` and `lvector`) to run.
+It uses my other libraries (`socket`, `buffer` and `lvector`) to run.
 
 Each `lclient_t` output is usable in each index of `server.clients.arr[i]`.
 Each `struct poll_event::data.ptr` member is a `client_t *`
