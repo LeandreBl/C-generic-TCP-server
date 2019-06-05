@@ -20,11 +20,11 @@ int lserver_add_listener(lserver_t *server, uint16_t port, int backlog)
 
 int lserver_del_listener(lserver_t *server, uint16_t port)
 {
-  for (size_t i = 0; i < server->listeners.len; ++i) {
-    if (server->listeners.arr[i].socket.port == port) {
-      if (epoll_ctl(server->epoll, EPOLL_CTL_DEL, server->listeners.arr[i].socket.fd, NULL) == -1)
+  lvector_foreach(listener, server->listeners) {
+    if (listener->socket.port == port) {
+      if (epoll_ctl(server->epoll, EPOLL_CTL_DEL, listener->socket.fd, NULL) == -1)
         return (-1);
-      lvector_erase(server->listeners, i);
+      lvector_erase_from_ptr(server->listeners, listener);
       return (0);
     }
   }

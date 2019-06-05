@@ -24,33 +24,16 @@ static int listen_and_move(lserver_t *server)
 {
   lclient_t *ptr;
 
-  for (int i = 0; i < server->esize; ++i) {
-    ptr = server->events[i].data.ptr;
+  lvector_foreach(evt, server->revents) {
+    ptr = evt->data.ptr;
     if (ptr->socket.backlog > 0) {
       if (is_a_listener(server, ptr) == -1)
         return (-1);
-      memmove(&server->events[i], &server->events[i + 1],
-              sizeof(*server->events) * (server->esize - i - 1));
-      --server->esize;
-      --i;
+      lvector_erase_from_ptr(server->revents, evt);
+      --evt;
     }
   }
-  if (server->esize == 0) {
-    free(server->events);
-    server->events = NULL;
-  }
   return (0);
-}
-
-static size_t erase_client(void *vector, lclient_t *ptr)
-{
-  lvector(lclient_t) *v = vector;
-  size_t i;
-
-  for (i = 0; i < v->len; ++i)
-    if (&v->arr[i] == ptr)
-      return (i);
-  return (i);
 }
 
 static int reading_clients(lserver_t *server)
@@ -58,19 +41,19 @@ static int reading_clients(lserver_t *server)
   lclient_t *ptr;
   ssize_t rd;
 
-  for (int i = 0; i < server->esize; ++i) {
-    ptr = server->events[i].data.ptr;
+  lvector_foreach(evt, server->revents) {
+    ptr = evt->data.ptr;
     rd = lbuffer_fdwrite(&ptr->buffer, ptr->socket.fd, -1);
     if (rd == -1)
       return (-1);
     if (rd == 0) {
       if (epoll_ctl(server->epoll, EPOLL_CTL_DEL, ptr->socket.fd, NULL) == -1)
         return (-1);
-      memmove(&server->events[i], &server->events[i + 1], sizeof(*server->events));
-      --server->esize;
+      lvector_erase_from_ptr(server->revents, evt);
+      --evt;
       if (server->on_disconnect != NULL)
         server->on_disconnect(ptr, server->data_disconnect);
-      lvector_erase(server->clients, erase_client(&server->clients, ptr));
+      lvector_erase_from_ptr(server->clients, ptr);
     }
   }
   return (0);
@@ -79,19 +62,15 @@ static int reading_clients(lserver_t *server)
 int lserver_update(lserver_t *server, int timeout)
 {
   size_t maxlen = server->clients.len + server->listeners.len;
+  int size;
 
-  server->events = realloc(server->events, sizeof(*server->events) * maxlen);
-  if (server->events == NULL) {
-    server->esize = 0;
+  lvector_reserve(server->revents, maxlen);
+  size = epoll_wait(server->epoll, lvector_data(server->revents), maxlen, timeout);
+  if (size == -1) {
+    lvector_clear(server->revents);
     return (-1);
   }
-  server->esize = epoll_wait(server->epoll, server->events, maxlen, timeout);
-  if (server->esize == -1) {
-    server->esize = 0;
-    free(server->events);
-    server->events = NULL;
-    return (-1);
-  }
+  server->revents.len = size;
   if (listen_and_move(server) == -1)
     return (-1);
   return (reading_clients(server));

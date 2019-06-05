@@ -12,7 +12,7 @@ You can totally use the `server->events` buffer, this buffer indexes gives you i
 
 Lserver example:
 ```C
-lserver_t server;
+lserver_t server = {0};
 uint16_t ports[] = {
   2121,
   5555,
@@ -27,11 +27,12 @@ if (lserver_create(&server, ports, sizeof(ports) / sizeof(*ports), 2048) == -1) 
   return (-1);
 }
 
+/* don't forget that you can set a 'on_disconnect' and/or 'on_connect' callback at any time */
 while (1) {
   /* Gives 100 miliseconds to the server to update */
   lserver_update(&server, 100);
-  for (int i = 0; i < server.esize; ++i) {
-    ptr = server.events[i].data.ptr;
+  lvector_foreach(evt, server.revents) {
+    ptr = evt->data.ptr;
 
     /* Read from the client buffer and store each byte into <line> until the ":\n" string is encountered */
     lbuffer_getbytes(ptr->buffer, &line, ":\n");

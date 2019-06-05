@@ -19,6 +19,7 @@ static int lserver_setvalues(lserver_t *server, size_t ports_n, size_t client_bu
     return (-1);
   lvector_create(server->clients, 8, _lserver_lclient_destructor);
   lvector_create(server->listeners, ports_n, _lserver_lclient_destructor);
+  lvector_create(server->revents, 8, NULL);
   if (server->clients.arr == NULL || server->listeners.arr == NULL)
     return (-1);
   return (0);
@@ -28,8 +29,8 @@ static bool port_already_pushed(void *vector, const uint16_t port)
 {
   lvector(lclient_t) *v = vector;
 
-  for (size_t i = 0; i < v->len; ++i) {
-    if (v->arr[i].socket.port == port)
+  lvector_foreach(client, *v) {
+    if (client->socket.port == port)
       return (true);
   }
   return (false);
@@ -59,6 +60,6 @@ void lserver_destroy(lserver_t *server)
 {
   lvector_destroy(server->listeners);
   lvector_destroy(server->clients);
-  free(server->events);
+  lvector_destroy(server->revents);
   close(server->epoll);
 }

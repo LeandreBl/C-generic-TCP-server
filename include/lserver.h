@@ -19,9 +19,8 @@ typedef struct lblserver_s {
 	void *data_disconnect;
 	void (* on_connect)(lclient_t *, void *);
 	void (* on_disconnect)(lclient_t *, void *);
-	struct epoll_event *events;
+	lvector(struct epoll_event) revents;
 	size_t client_buffer_size;
-	int esize;
 	int epoll;
 } lserver_t;
 
