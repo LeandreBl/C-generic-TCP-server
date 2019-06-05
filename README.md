@@ -1,9 +1,9 @@
 # lserver
-This libray include a linux server implementation, and a client one.
+This library includes a linux server implementation, and a client one.
 
 This library uses my other libs (`socket`, `buffer` and `lvector`) to run.
 
-Each `lclient_t` output is usable in each index of `server->clients->i[i]`.
+Each `lclient_t` output is usable in each index of `server.clients.arr[i]`.
 Each `struct poll_event::data.ptr` member is a `client_t *`
 You can use the `lvector_foreach` API to loop in it
 
