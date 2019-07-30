@@ -7,7 +7,7 @@ int lserver_add_listener(lserver_t *server, uint16_t port, int backlog)
   lclient_t *listener;
   struct epoll_event evt;
 
-  lvector_emplace_back(server->listeners, lclient_create, server->client_buffer_size, NULL, 0);
+  lvector_emplace_back(server->listeners, lclient_create, server->config.client_buffer_size, NULL, 0);
   listener = lvector_back(server->listeners);
   evt.data.ptr = listener;
   evt.events = EPOLLIN;

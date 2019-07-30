@@ -16,7 +16,6 @@ LIBS		+= -llgtab
 LIBS		+= -llcbuffer
 
 SRCS		= src/lserver.c
-SRCS		+= src/callbacks.c
 SRCS		+= src/update.c
 SRCS		+= src/add_del_listener.c
 SRCS		+= src/client.c

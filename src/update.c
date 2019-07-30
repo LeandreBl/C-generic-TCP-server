@@ -8,15 +8,15 @@ static int is_a_listener(lserver_t *server, lclient_t *ptr)
   struct epoll_event evt;
   lclient_t *new;
 
-  lvector_emplace_back(server->clients, lclient_create, server->client_buffer_size, NULL, 0);
+  lvector_emplace_back(server->clients, lclient_create, server->config.client_buffer_size, NULL, 0);
   new = lvector_back(server->clients);
   evt.events = EPOLLIN;
   evt.data.ptr = new;
   if (lsocket_accept(&ptr->socket, &new->socket) == -1
       || epoll_ctl(server->epoll, EPOLL_CTL_ADD, new->socket.fd, &evt) == -1)
     return (-1);
-  if (server->on_connect)
-    server->on_connect(new, server->data_connect);
+  if (server->config.cbs.on_connect_callback)
+    server->config.cbs.on_connect_callback(server, new, ptr->socket.port, server->config.cbs.on_connect_userdata);
   return (0);
 }
 
@@ -51,8 +51,8 @@ static int reading_clients(lserver_t *server)
         return (-1);
       lvector_erase_from_ptr(server->revents, evt);
       --evt;
-      if (server->on_disconnect != NULL)
-        server->on_disconnect(ptr, server->data_disconnect);
+      if (server->config.cbs.on_disconnect_callback != NULL)
+        server->config.cbs.on_disconnect_callback(server, ptr, server->config.cbs.on_disconnect_userdata);
       lvector_erase_from_ptr(server->clients, ptr);
     }
   }
