@@ -1,29 +1,30 @@
 #ifndef _LSERVER_H
-# define _LSERVER_H
+#define _LSERVER_H
 
-# include <stdint.h>
-# include <stdbool.h>
-# include <stddef.h>
+#include <stdint.h>
+#include <stdbool.h>
+#include <stddef.h>
 
-# include <stdio.h>
-# include <sys/epoll.h>
-# include <sys/cdefs.h>
+#include <stdio.h>
+#include <sys/epoll.h>
+#include <sys/cdefs.h>
 
-# include <lclient.h>
-# include <lvector.h>
+#include <lclient.h>
+#include <lvector.h>
 
 /* forward declaration */
 typedef struct lblserver_s lserver_t;
 
 struct lserver_callbacks {
 	/* function to call when receiving a new connection (can be NULL) */
-	void (* on_connect_callback)(lserver_t *server, lclient_t *client, uint16_t port, void *userdata);
+	void (*on_connect_callback)(lserver_t *server, lclient_t *client, uint16_t port,
+				    void *userdata);
 
 	/* userdata to pass when receiveing a new connection (can be NULL) */
 	void *on_connect_userdata;
 
 	/* function to call when receiving a disconnection (can be NULL) */
-	void (* on_disconnect_callback)(lserver_t *server, lclient_t *client, void *userdata);
+	void (*on_disconnect_callback)(lserver_t *server, lclient_t *client, void *userdata);
 
 	/* userdata to pass when receiving a disconnection (can be NULL) */
 	void *on_disconnect_userdata;
@@ -64,15 +65,16 @@ struct lblserver_s {
  * \param config The server configuration
  * \return -1 in case of error, 0 otherwise
  */
-int lserver_create(lserver_t *server, const struct lserver_config *config) __THROW __nonnull((1, 2));
+int lserver_create(lserver_t *server, const struct lserver_config *config) __THROW
+	__nonnull((1, 2));
 
 /**
  * \fn int lserver_update(lserver_t *server, int timeout)
  * \brief Updates a server instance
  *
  * \param server A server handle to update
- * \param timeout Specifies the number of miliseconds the function will block if there is no event, -1 to block indefinitely
- * \return -1 in case of error, 0 otherwise
+ * \param timeout Specifies the number of miliseconds the function will block if there is no event,
+ * -1 to block indefinitely \return -1 in case of error, 0 otherwise
  */
 int lserver_update(lserver_t *server, int timeout) __THROW __nonnull((1));
 
@@ -105,10 +107,12 @@ int lserver_eject(lserver_t *server, int client_fd) __THROW __nonnull((1));
 int lserver_link(lserver_t *server, int fd) __THROW __nonnull((1));
 
 
-int lserver_add_listener(lserver_t *server, uint16_t listener_port, int backlog) __THROW __nonnull((1));
+int lserver_add_listener(lserver_t *server, uint16_t listener_port, int backlog) __THROW
+	__nonnull((1));
 int lserver_del_listener(lserver_t *server, uint16_t listener_port) __THROW __nonnull((1));
 
 /* if listener_port == 0, set all listeners */
-int lserver_set_backlog(lserver_t *server, uint16_t listener_port, int new_backlog) __THROW __nonnull((1));
+int lserver_set_backlog(lserver_t *server, uint16_t listener_port, int new_backlog) __THROW
+	__nonnull((1));
 
 #endif /* !_LSERVER_H */
